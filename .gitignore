@@ -22,4 +22,3 @@ glove.6B.100d.txt
 data/*.*
 data/
 /data
-/models/LSTM_Attn.py
