@@ -6,6 +6,11 @@ Original dataset can be downloaded from - http://ai.stanford.edu/~amaas/data/sen
 
 * data_exp.py - For identifying the max length of the sentence.
 * data_prep.py - Loads the dataset and splits into train and test set.
+    Modify the frac value in `df = df.sample(frac=0.1, random_state=42)` (frac=0.1 loads 10% of the dataset.)
 * preprocess.py - Tokenize and apply GloVe embedding on the dataset.
-* models/ - model files.
+    Modify the values min_freq = int:2 ( to choose the words that are present more than twice in the dataset. You can also choose the vocab size using MAX_VOCAB_SIZE. Modify the code `text.build_vocab(dataset, data_test,min_freq=min_freq)` or `text.build_vocab(dataset, data_test,max_size=MAX_VOCAB_SIZE )`)
+* data/ - Has the raw data and processed data
+* model_files/ - model files.
+* models/ - has LSTM.py, LSTM_Attn.py
 * main.py - model training and evaluation.
+

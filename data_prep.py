@@ -1,9 +1,11 @@
 import pandas as pd
 from sklearn import preprocessing
 import collections
+import numpy as np
+
 from sklearn.model_selection import train_test_split
 
-data_file = "data/dataset_orig.csv"
+data_file = "data/raw_data/dataset_orig.csv"
 
 def load_dataset(data_file):
     '''
@@ -16,12 +18,13 @@ def load_dataset(data_file):
     df = df[["target","text"]]
     # To load the entire dataset set frac=1
     df = df.sample(frac=0.1, random_state=42)
-    df.to_csv("data/imdb_dataset.csv", index=False)
-    dataf = pd.read_csv("data/imdb_dataset.csv")
+    df.to_csv("data/raw_data/imdb_dataset.csv", index=False)
+    dataf = pd.read_csv("data/raw_data/imdb_dataset.csv")
     labelencoder = preprocessing.LabelEncoder()
     dataf["target"] = labelencoder.fit_transform(dataf["target"])
     target_map = {k:i for k,i in enumerate(labelencoder.classes_)}
-    print(target_map)
+    print("target map is ",target_map)
+    np.save('model_files/label2idx.npy', target_map)
     c = collections.Counter(dataf["target"])
     print(c)
     return dataf
@@ -31,14 +34,16 @@ def split_dataset(df):
     splits the dataset into train and test 
     '''
     train, test = train_test_split(df, test_size=0.15, random_state=42)
-    train.to_csv("data/train.csv", index=False)
-    test.to_csv("data/test.csv", index=False)
-    df_train = pd.read_csv("data/train.csv")
+    train.to_csv("data/processed_data/train.csv", index=False)
+    test.to_csv("data/processed_data/test.csv", index=False)
+    df_train = pd.read_csv("data/processed_data/train.csv")
     print(df_train.shape)
-    df_test = pd.read_csv("data/test.csv")
+    df_test = pd.read_csv("data/processed_data/test.csv")
     print(df_test.shape)
    
 dataf = load_dataset(data_file)
 split_dataset(dataf)
 
-    
+print(np.load('model_files/label2idx.npy', allow_pickle=True))
+
+

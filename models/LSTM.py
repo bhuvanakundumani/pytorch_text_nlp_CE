@@ -1,26 +1,29 @@
+import nltk
+import numpy as np 
 import torch
 import torch.nn as nn
-import torch.nn.functional as functional
+import torch.nn.functional as F 
 
 class LstmClassifier(nn.Module):
-    def __init__(self,batch_size,output_size,hidden_size,vocab_size,embedding_length, pretrained_embed):
-        super(LstmClassifier,self).__init__()
+    def __init__(self, batch_size, output_size, hidden_size, vocab_size, embedding_length, pretrained_flag, pretrained_embed ):
+        super(LstmClassifier, self).__init__()
         self.batch_size = batch_size
         self.output_size = output_size
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
         self.embedding_length = embedding_length
-        self.embed = nn.Embedding.from_pretrained(pretrained_embed, freeze=False)
-        self.lstm = nn.LSTM(embedding_length,hidden_size)
-        self.linear = nn.Linear(hidden_size, 16)
-        self.relu = nn.ReLU()
-        self.output = nn.Linear(16,output_size)
-
+        if pretrained_flag:
+            self.embed = nn.Embedding.from_pretrained(pretrained_embed, freeze=False)
+        else:
+            self.embed = nn.Embedding(vocab_size, embedding_length)
+        self.lstm = nn.LSTM(embedding_length, hidden_size, batch_first=True)
+        self.out = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
+        #import ipdb;ipdb.set_trace();
         h_embedding = self.embed(x)
-        output, _ = self.lstm(h_embedding)
-        maxpool, _ = torch.max(output, 1)
-        linear = self.relu(self.linear(maxpool))
-        out = self.output(linear)
-        return out
+        output, (h_lstm, c_lstm) = self.lstm(h_embedding)       
+        logits = self.out(h_lstm.squeeze(0))
+        #logits = self.out(h_lstm.view(output.shape[0], output.shape[2]))
+        return logits
+        
