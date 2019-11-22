@@ -20,8 +20,9 @@ class LstmAttentionModel(nn.Module):
         self.lstm = nn.LSTM(embedding_length, hidden_size, batch_first=True)
         self.out = nn.Linear(hidden_size, output_size)
 
+
     def attention_net(self, output_lstm, final_hidden_state):
-        #import ipdb;ipdb.set_trace()
+        import ipdb;ipdb.set_trace()
         hidden = final_hidden_state.squeeze(0).unsqueeze(2)
         bsize, hsize, _ = hidden.size()
         v = self.attn_weights.size()
@@ -33,6 +34,7 @@ class LstmAttentionModel(nn.Module):
 
     def forward(self, x):
         h_embedding = self.embed(x)
+        import ipdb; ipdb.set_trace();
         output, (h_lstm, c_lstm) = self.lstm(h_embedding)
         attn_output = self.attention_net(output, h_lstm)
         logits = self.out(attn_output)

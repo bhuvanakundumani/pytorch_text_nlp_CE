@@ -7,6 +7,7 @@ import json
 from tqdm import tqdm
 from models.LSTM import LstmClassifier
 from models.LSTM_Attn import LstmAttentionModel
+from models.LSTM_MHAttn import LstmMultiAttentionModel
 from preprocess import preproc_load
 from sklearn.metrics import accuracy_score
 import torch.nn as nn
@@ -29,7 +30,8 @@ output_size = 2
 hidden_size = 100
 embedding_length = 100
 batch_size = 64
-model = LstmClassifier(batch_size, output_size, hidden_size, data_dict["vocab_size"], embedding_length, True, data_dict["pretrained_embeddings"])
+model = LstmMultiAttentionModel(batch_size, output_size, hidden_size, data_dict["vocab_size"], embedding_length, True, data_dict["pretrained_embeddings"])
+#model = LstmClassifier(batch_size, output_size, hidden_size, data_dict["vocab_size"], embedding_length, True, data_dict["pretrained_embeddings"])
 #model = LstmAttentionModel(batch_size, output_size, hidden_size, data_dict["vocab_size"], embedding_length, True, data_dict["pretrained_embeddings"])
 optimizer = torch.optim.Adam(model.parameters(), lr)
 loss_function = F.cross_entropy
